@@ -27,6 +27,14 @@ These entries summarize established project choices documented in the repository
 - **Consequences:** Additive data changes need explicit versioning and loader handling; binary layout assumptions should be protected by size checks and tests already present in the codebase.
 - **References:** [`CONTRIBUTING.md`](CONTRIBUTING.md#3-technical-requirements--safety-checklist), [`docs/developer_guide.md`](docs/developer_guide.md#1-copy-on-write-workspaceinstruments-incremental-project-saver--hybrid-sd-streaming), [`core/source/mtStructs.h`](core/source/mtStructs.h).
 
+### New project features use opt-in additive serialization
+
+- **Date:** 2026-11-23
+- **Context:** New features need to coexist with projects created by older firmware and remain interoperable for as long as possible.
+- **Decision:** A new feature must not change the serialized project data for existing projects until the feature is enabled. When enabled, it may extend the project format additively, and its settings must be saved in the project and restored when that project is recalled. For most features, update the project structure to provide this persistence explicitly.
+- **Consequences:** Feature defaults must preserve legacy behavior, disabled features must not introduce new project data, and additive fields require compatible versioning, size checks, and loader defaults. Feature work should include save/load validation for both legacy projects and projects with the feature enabled.
+- **References:** [Existing serialized project and instrument formats remain compatible](#existing-serialized-project-and-instrument-formats-remain-compatible), [`core/source/mtStructs.h`](core/source/mtStructs.h).
+
 ### Large sample files use header-only workspace copies and eligible SD streaming
 
 - **Context:** Copying full PCM payloads during project open/save consumes time and SDRAM, while playback still needs reliable immediate note starts.
